@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       https://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <!-- 事务管理 -->
+    <!-- 事务管理器 -->
+    <bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"></property>
+    </bean>
+    <!--  事务详情（事务通知），在aop筛选基础上，对ABC三个确定使用什么样的事务。例如：AC读写、B只读 等
+        <tx:attributes> 用于配置事务详情（事务属性）
+            <tx:method name=""/> 详情具体配置
+                propagation 传播行为 ， REQUIRED：必须；REQUIRES_NEW:必须是新的
+                isolation 隔离级别
+    -->
+    <tx:advice id="txAdvice" transaction-manager="txManager">
+        <tx:attributes>
+            <tx:method name="transfer" propagation="REQUIRED" isolation="DEFAULT" read-only="false" />
+
+        </tx:attributes>
+    </tx:advice>
+    <!--  AOP编程，目标类有ABCD（4个连接点），切入点表达式 确定增强的连接器，从而获得切入点：ABC -->
+    <aop:config>
+        <aop:advisor advice-ref="txAdvice" pointcut="execution(* cn.smbms.service.*.*(..))"/>
+    </aop:config>
+
+
+</beans>

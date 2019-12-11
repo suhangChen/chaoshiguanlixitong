@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       https://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+    <!--开启注解配置-->
+    <context:annotation-config></context:annotation-config>
+    <!--扫描指定包下的注解-->
+    <context:component-scan base-package="cn.smbms.controller"/>
+    <!--springmvc注解驱动：配置处理器映射器、处理器适配器等-->
+    <mvc:annotation-driven/>
+
+    <!-- 配置视图解析器 -->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <!-- 配置逻辑视图的前缀 -->
+        <property name="prefix" value="/WEB-INF/jsp/"/>
+        <!--&lt;!&ndash; 配置逻辑视图的后缀 &ndash;&gt;-->
+        <property name="suffix" value=".jsp"/>
+    </bean>
+    <!--静态资源处理-->
+    <mvc:resources mapping="/static/**" location="/static/"/>
+    <!-- 转换器配置 -->
+    <bean id="conversionService" class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
+        <property name="converters">
+            <set>
+                <!--日期转换服务-->
+                <bean class="cn.smbms.utils.DateConverter"/>
+            </set>
+        </property>
+    </bean>
+
+    <!-- 文件上传,id必须设置为multipartResolver -->
+    <bean id="multipartResolver"
+          class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <!-- 设置文件上传大小 -->
+        <property name="maxUploadSize" value="5000000"/>
+        <property name="defaultEncoding" value="utf-8"></property>
+    </bean>
+    <!--拦截器-->
+    <!--<mvc:interceptors>-->
+    <!--<mvc:interceptor>-->
+    <!--<mvc:mapping path="/**"/>-->
+    <!--<bean class="com.ray.interceptor.MyInterceptor"/>-->
+    <!--</mvc:interceptor>-->
+    <!--</mvc:interceptors>-->
+
+</beans>
